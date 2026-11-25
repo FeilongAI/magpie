@@ -1648,14 +1648,19 @@ func claudePrint(req *Request, binary claudeCLI) (code, why string) {
 // asks: a code for the provider page (ClaudeModeNow) and the log's words,
 // "" "" when runs can be the interactive mode.
 func claudeMachineWhy(binary claudeCLI) (code, why string) {
+	return claudeMachineWhyForOS(binary, runtime.GOOS)
+}
+
+func claudeMachineWhyForOS(binary claudeCLI, goos string) (code, why string) {
+	printMode := settings.Shared().ClaudePrintMode
 	for _, c := range []struct {
 		is        bool
 		code, why string
 	}{
 		{!claudeTUIRuns, "no-shim", "no shim"},
-		{runtime.GOOS != "darwin" && runtime.GOOS != "linux" && runtime.GOOS != "windows", "os", runtime.GOOS},
+		{!printMode && goos != "darwin" && goos != "linux" && goos != "windows", "os", goos},
 		{binary.wsl == nil && binary.path == "", "missing", "no Claude Code path"},
-		{settings.Shared().ClaudePrintMode, "off", "the interactive mode is turned off"},
+		{printMode, "off", "the interactive mode is turned off"},
 	} {
 		if c.is {
 			return c.code, c.why

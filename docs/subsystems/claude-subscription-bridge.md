@@ -445,7 +445,9 @@ words avoid "Models" just before the error's type: "Models ›
 Replies…\",\"type\":\"invalid_request_error" read as a model not served
 (`provider.ModelUnserved`), which made the 400 retryable again. That is
 when (`claudeTUI`, `claudeMachineWhy`) this computer has no Claude Code
-path or isn't macOS, Linux or Windows. Nothing a request asks is refused
+path or interactive mode is enabled on a platform without an interactive helper.
+On Android, selecting `claude -p` lets the gateway use the Termux installation
+without the interactive helper. Nothing a request asks is refused
 any more (`claudePrint` keeps an image known by its URL, which
 `serveClaudeSubscription` has downloaded before any run, below).
 

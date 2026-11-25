@@ -64,6 +64,31 @@ func TestClaudeTUIChosen(t *testing.T) {
 	}
 }
 
+func TestClaudePrintModeOnAndroid(t *testing.T) {
+	original := settings.Load()
+	t.Cleanup(func() { _ = settings.Save(original) })
+	wasRunning := claudeTUIRuns
+	claudeTUIRuns = true
+	t.Cleanup(func() { claudeTUIRuns = wasRunning })
+	binary := claudeCLI{path: "/data/data/com.termux/files/usr/bin/claude"}
+	for _, test := range []struct {
+		printMode bool
+		want      string
+	}{
+		{false, "os"},
+		{true, "off"},
+	} {
+		current := settings.Load()
+		current.ClaudePrintMode = test.printMode
+		if err := settings.Save(current); err != nil {
+			t.Fatal(err)
+		}
+		if got, _ := claudeMachineWhyForOS(binary, "android"); got != test.want {
+			t.Errorf("Android with print mode %v: got %q, want %q", test.printMode, got, test.want)
+		}
+	}
+}
+
 // The helper's line saying why it became -p is logged; the rest of Claude
 // Code's stderr isn't.
 func TestClaudeTUIFallbackLogged(t *testing.T) {
